@@ -1,6 +1,6 @@
 # Pura Pata 🐕
 
-Plataforma web para la adopción de perros callejeros en México. Conecta refugios, rescatistas independientes y personas con perros disponibles para adopción.
+Plataforma web para la adopción de perros callejeros en Costa Rica. Conecta refugios, rescatistas independientes y personas con perros disponibles para adopción.
 
 ## Características
 
