@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12 text-center mb-5">
+            <h1 class="display-4">🐕 Bienvenido a Pura Pata</h1>
+            <p class="lead">Encuentra a tu nuevo mejor amigo</p>
+        </div>
+    </div>
+
+    <div class="row mb-5">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h3>🏠 Refugios</h3>
+                    <p>Trabajamos con refugios y rescatistas para dar hogar a perros necesitados.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h3>🐶 Adopción</h3>
+                    <p>Encuentra el perro perfecto para ti y tu familia.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card h-100">
+                <div class="card-body text-center">
+                    <h3>❤️ Amor</h3>
+                    <p>Cada perro merece una segunda oportunidad y un hogar lleno de amor.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12 text-center">
+            <h2>Perros Disponibles para Adopción</h2>
+            {% if dogs %}
+                <div class="row mt-4">
+                    {% for dog in dogs %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card">
+                            {% if dog.photo_main %}
+                            <img src="{{ dog.photo_main.url }}" class="card-img-top" alt="{{ dog.name }}">
+                            {% endif %}
+                            <div class="card-body">
+                                <h5 class="card-title">{{ dog.name }}</h5>
+                                <p class="card-text">
+                                    <strong>Raza:</strong> {{ dog.breed }}<br>
+                                    <strong>Edad:</strong> {{ dog.get_age_display }}<br>
+                                    <strong>Tamaño:</strong> {{ dog.get_size_display }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="alert alert-info mt-4">
+                    <p>Aún no hay perros publicados. ¡Visítanos pronto!</p>
+                    <p>Los refugios y rescatistas pueden publicar perros desde el <a href="/admin/" class="alert-link">panel de administración</a>.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Perros en Adopción - Pura Pata{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <h1>Perros Disponibles para Adopción</h1>
+            <p class="lead">Encuentra a tu nuevo mejor amigo</p>
+        </div>
+    </div>
+
+    <div class="row">
+        {% if dogs %}
+            {% for dog in dogs %}
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    {% if dog.photo_main %}
+                    <img src="{{ dog.photo_main.url }}" class="card-img-top" alt="{{ dog.name }}" style="height: 300px; object-fit: cover;">
+                    {% else %}
+                    <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 300px;">
+                        <span class="text-white" style="font-size: 4rem;">🐕</span>
+                    </div>
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ dog.name }}</h5>
+                        <p class="card-text">{{ dog.description|truncatewords:20 }}</p>
+                        <ul class="list-unstyled">
+                            <li><strong>Raza:</strong> {{ dog.breed }}</li>
+                            <li><strong>Edad:</strong> {{ dog.get_age_display }}</li>
+                            <li><strong>Tamaño:</strong> {{ dog.get_size_display }}</li>
+                            <li><strong>Sexo:</strong> {{ dog.get_gender_display }}</li>
+                        </ul>
+                        <div class="mt-2">
+                            {% if dog.vaccinated %}
+                            <span class="badge bg-success">Vacunado</span>
+                            {% endif %}
+                            {% if dog.sterilized %}
+                            <span class="badge bg-info">Esterilizado</span>
+                            {% endif %}
+                            {% if dog.dewormed %}
+                            <span class="badge bg-warning">Desparasitado</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% if dog.shelter %}
+                    <div class="card-footer">
+                        <small class="text-muted">📍 {{ dog.shelter.name }}</small>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="col-lg-12">
+                <div class="alert alert-info">
+                    <h4>No hay perros disponibles en este momento</h4>
+                    <p>Por favor, vuelve pronto o contacta con los refugios locales.</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
