@@ -43,10 +43,14 @@
                             <span class="badge bg-warning">Desparasitado</span>
                             {% endif %}
                         </div>
+                        {% if dog.city or dog.state %}
+                        <p class="mt-2 mb-0"><small class="text-muted">📍 {{ dog.get_location }}</small></p>
+                        {% endif %}
+                        <a href="{% url 'dogs:dog_detail' dog.pk %}" class="btn btn-primary btn-sm mt-2 w-100">Ver Detalles</a>
                     </div>
                     {% if dog.shelter %}
                     <div class="card-footer">
-                        <small class="text-muted">📍 {{ dog.shelter.name }}</small>
+                        <small class="text-muted">🏠 {{ dog.shelter.name }}</small>
                     </div>
                     {% endif %}
                 </div>

@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}Mis Perros - Pura Pata{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Mis Perros Publicados</h2>
+        <a href="{% url 'dogs:dog_create' %}" class="btn btn-primary">+ Publicar Nuevo Perro</a>
+    </div>
+
+    {% if dogs %}
+    <div class="row">
+        {% for dog in dogs %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card h-100">
+                {% if dog.photo_main %}
+                <img src="{{ dog.photo_main.url }}" class="card-img-top" alt="{{ dog.name }}" style="height: 200px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">{{ dog.name }}</h5>
+                    <p class="card-text">
+                        <span class="badge bg-{% if dog.status == 'disponible' %}success{% elif dog.status == 'adoptado' %}secondary{% else %}warning{% endif %}">
+                            {{ dog.get_status_display }}
+                        </span>
+                    </p>
+                    <ul class="list-unstyled small">
+                        <li><strong>Raza:</strong> {{ dog.breed }}</li>
+                        <li><strong>Edad:</strong> {{ dog.get_age_display }}</li>
+                        <li><strong>Ubicación:</strong> {{ dog.get_location }}</li>
+                        <li><strong>Publicado:</strong> {{ dog.created_at|date:"d/m/Y" }}</li>
+                    </ul>
+                </div>
+                <div class="card-footer">
+                    <div class="btn-group w-100">
+                        <a href="{% url 'dogs:dog_detail' dog.pk %}" class="btn btn-sm btn-outline-primary">Ver</a>
+                        <a href="{% url 'dogs:dog_edit' dog.pk %}" class="btn btn-sm btn-outline-secondary">Editar</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="alert alert-info">
+        <h4>No has publicado ningún perro</h4>
+        <p>Ayuda a un perro a encontrar un hogar publicando su información.</p>
+        <a href="{% url 'dogs:dog_create' %}" class="btn btn-primary">Publicar mi primer perro</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

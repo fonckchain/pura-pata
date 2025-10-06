@@ -48,6 +48,17 @@ class Dog(models.Model):
                                related_name='dogs', verbose_name="Refugio")
     publisher = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Publicado por")
 
+    # Ubicación
+    address = models.CharField(max_length=300, blank=True, null=True, verbose_name="Dirección")
+    city = models.CharField(max_length=100, blank=True, null=True, verbose_name="Ciudad")
+    state = models.CharField(max_length=100, blank=True, null=True, verbose_name="Estado")
+    latitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True, verbose_name="Latitud")
+    longitude = models.DecimalField(max_digits=9, decimal_places=6, null=True, blank=True, verbose_name="Longitud")
+
+    # Contacto
+    contact_phone = models.CharField(max_length=20, blank=True, null=True, verbose_name="Teléfono de contacto")
+    contact_email = models.EmailField(blank=True, null=True, verbose_name="Email de contacto")
+
     # Metadatos
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Fecha de publicación")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Última actualización")
@@ -66,3 +77,16 @@ class Dog(models.Model):
         if self.age_months > 0:
             return f"{self.age_years} años, {self.age_months} meses"
         return f"{self.age_years} años"
+
+    def get_location(self):
+        """Retorna la ubicación completa"""
+        parts = []
+        if self.city:
+            parts.append(self.city)
+        if self.state:
+            parts.append(self.state)
+        return ", ".join(parts) if parts else "Sin ubicación"
+
+    def has_coordinates(self):
+        """Verifica si tiene coordenadas para mostrar en mapa"""
+        return self.latitude is not None and self.longitude is not None

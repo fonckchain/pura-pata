@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ dog.name }} - Pura Pata{% endblock %}
+
+{% block extra_css %}
+<style>
+    #dogMap {
+        height: 300px;
+        width: 100%;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8">
+            <h1>{{ dog.name }}</h1>
+            <p class="lead">{{ dog.description }}</p>
+
+            {% if dog.photo_main %}
+            <img src="{{ dog.photo_main.url }}" class="img-fluid rounded mb-3" alt="{{ dog.name }}">
+            {% endif %}
+
+            <div class="row mb-3">
+                {% if dog.photo_1 %}
+                <div class="col-4">
+                    <img src="{{ dog.photo_1.url }}" class="img-fluid rounded" alt="{{ dog.name }}">
+                </div>
+                {% endif %}
+                {% if dog.photo_2 %}
+                <div class="col-4">
+                    <img src="{{ dog.photo_2.url }}" class="img-fluid rounded" alt="{{ dog.name }}">
+                </div>
+                {% endif %}
+                {% if dog.photo_3 %}
+                <div class="col-4">
+                    <img src="{{ dog.photo_3.url }}" class="img-fluid rounded" alt="{{ dog.name }}">
+                </div>
+                {% endif %}
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5>Información</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="list-unstyled">
+                                <li><strong>Raza:</strong> {{ dog.breed }}</li>
+                                <li><strong>Edad:</strong> {{ dog.get_age_display }}</li>
+                                <li><strong>Tamaño:</strong> {{ dog.get_size_display }}</li>
+                                <li><strong>Sexo:</strong> {{ dog.get_gender_display }}</li>
+                                <li><strong>Color:</strong> {{ dog.color }}</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Salud:</strong></p>
+                            <ul class="list-unstyled">
+                                <li>
+                                    {% if dog.vaccinated %}✅{% else %}❌{% endif %} Vacunado
+                                </li>
+                                <li>
+                                    {% if dog.sterilized %}✅{% else %}❌{% endif %} Esterilizado
+                                </li>
+                                <li>
+                                    {% if dog.dewormed %}✅{% else %}❌{% endif %} Desparasitado
+                                </li>
+                            </ul>
+                            {% if dog.special_needs %}
+                            <p><strong>Necesidades especiales:</strong> {{ dog.special_needs }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if dog.has_coordinates %}
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5>Ubicación</h5>
+                    <p>{{ dog.get_location }}</p>
+                    {% if dog.address %}
+                    <p class="text-muted">{{ dog.address }}</p>
+                    {% endif %}
+                    <div id="dogMap"></div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card sticky-top" style="top: 20px;">
+                <div class="card-body">
+                    <h5 class="card-title">Información de Contacto</h5>
+                    <p class="card-text">
+                        {% if dog.shelter %}
+                        <strong>Refugio:</strong> {{ dog.shelter.name }}<br>
+                        {% endif %}
+                        <strong>Publicado por:</strong> {{ dog.publisher.get_full_name|default:dog.publisher.username }}<br>
+                    </p>
+
+                    {% if dog.contact_phone %}
+                    <p>
+                        <strong>Teléfono:</strong><br>
+                        <a href="tel:{{ dog.contact_phone }}" class="btn btn-outline-primary w-100 mb-2">
+                            📞 {{ dog.contact_phone }}
+                        </a>
+                    </p>
+                    {% endif %}
+
+                    {% if dog.contact_email %}
+                    <p>
+                        <strong>Email:</strong><br>
+                        <a href="mailto:{{ dog.contact_email }}" class="btn btn-outline-secondary w-100">
+                            ✉️ {{ dog.contact_email }}
+                        </a>
+                    </p>
+                    {% endif %}
+
+                    <hr>
+                    <p class="text-muted small">
+                        Publicado el {{ dog.created_at|date:"d/m/Y" }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+{% if dog.has_coordinates %}
+<script>
+function initDogMap() {
+    const location = { lat: {{ dog.latitude }}, lng: {{ dog.longitude }} };
+    const map = new google.maps.Map(document.getElementById('dogMap'), {
+        center: location,
+        zoom: 15
+    });
+    new google.maps.Marker({
+        position: location,
+        map: map,
+        title: '{{ dog.name }}'
+    });
+}
+// NOTA: Necesitas una API key de Google Maps
+// Descomenta y agrega tu API key
+// <script src="https://maps.googleapis.com/maps/api/js?key=TU_API_KEY&callback=initDogMap" async defer></script>
+</script>
+{% endif %}
+{% endblock %}

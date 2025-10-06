@@ -18,12 +18,15 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from dogs.views import home
+from dogs.views import home, user_login, user_logout, register
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', home, name='home'),
     path('dogs/', include('dogs.urls')),
+    path('login/', user_login, name='login'),
+    path('logout/', user_logout, name='logout'),
+    path('register/', register, name='register'),
 ]
 
 # Servir archivos media en desarrollo

@@ -1,0 +1,224 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}{{ title }} - Pura Pata{% endblock %}
+
+{% block extra_css %}
+<style>
+    #map {
+        height: 400px;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8 offset-lg-2">
+            <h2 class="mb-4">{{ title }}</h2>
+
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Información Básica</h5>
+                    </div>
+                    <div class="card-body">
+                        {{ form.name|as_crispy_field }}
+                        {{ form.description|as_crispy_field }}
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form.breed|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.color|as_crispy_field }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                {{ form.size|as_crispy_field }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.gender|as_crispy_field }}
+                            </div>
+                            <div class="col-md-2">
+                                {{ form.age_years|as_crispy_field }}
+                            </div>
+                            <div class="col-md-2">
+                                {{ form.age_months|as_crispy_field }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Salud</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    {{ form.vaccinated }}
+                                    <label class="form-check-label" for="{{ form.vaccinated.id_for_label }}">
+                                        Vacunado
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    {{ form.sterilized }}
+                                    <label class="form-check-label" for="{{ form.sterilized.id_for_label }}">
+                                        Esterilizado
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    {{ form.dewormed }}
+                                    <label class="form-check-label" for="{{ form.dewormed.id_for_label }}">
+                                        Desparasitado
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        {{ form.special_needs|as_crispy_field }}
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Fotos</h5>
+                    </div>
+                    <div class="card-body">
+                        {{ form.photo_main|as_crispy_field }}
+                        <div class="row">
+                            <div class="col-md-4">
+                                {{ form.photo_1|as_crispy_field }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.photo_2|as_crispy_field }}
+                            </div>
+                            <div class="col-md-4">
+                                {{ form.photo_3|as_crispy_field }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Ubicación</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted">Haz clic en el mapa para marcar la ubicación del perro</p>
+                        <div id="map"></div>
+                        {{ form.latitude }}
+                        {{ form.longitude }}
+
+                        {{ form.address|as_crispy_field }}
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form.city|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.state|as_crispy_field }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h5 class="mb-0">Contacto</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form.contact_phone|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.contact_email|as_crispy_field }}
+                            </div>
+                        </div>
+                        {{ form.shelter|as_crispy_field }}
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <a href="{% url 'dogs:my_dogs' %}" class="btn btn-secondary">Cancelar</a>
+                    <button type="submit" class="btn btn-primary">Publicar Perro</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let map, marker;
+
+function initMap() {
+    // Centro de México por defecto
+    const defaultLocation = { lat: 23.6345, lng: -102.5528 };
+
+    // Crear el mapa
+    map = new google.maps.Map(document.getElementById('map'), {
+        center: defaultLocation,
+        zoom: 5
+    });
+
+    // Si ya hay coordenadas guardadas, mostrar el marker
+    const lat = parseFloat(document.getElementById('id_latitude').value);
+    const lng = parseFloat(document.getElementById('id_longitude').value);
+
+    if (lat && lng) {
+        const savedLocation = { lat, lng };
+        marker = new google.maps.Marker({
+            position: savedLocation,
+            map: map,
+            draggable: true
+        });
+        map.setCenter(savedLocation);
+        map.setZoom(15);
+
+        // Actualizar cuando se mueve el marker
+        marker.addListener('dragend', function() {
+            updateLocation(marker.getPosition());
+        });
+    }
+
+    // Click en el mapa para agregar/mover marker
+    map.addListener('click', function(e) {
+        if (marker) {
+            marker.setPosition(e.latLng);
+        } else {
+            marker = new google.maps.Marker({
+                position: e.latLng,
+                map: map,
+                draggable: true
+            });
+
+            marker.addListener('dragend', function() {
+                updateLocation(marker.getPosition());
+            });
+        }
+        updateLocation(e.latLng);
+    });
+}
+
+function updateLocation(location) {
+    document.getElementById('id_latitude').value = location.lat();
+    document.getElementById('id_longitude').value = location.lng();
+}
+
+// Cargar API de Google Maps
+// NOTA: Necesitas una API key de Google Maps
+// Descomenta la siguiente línea y agrega tu API key
+// <script src="https://maps.googleapis.com/maps/api/js?key=TU_API_KEY&callback=initMap" async defer></script>
+</script>
+{% endblock %}
